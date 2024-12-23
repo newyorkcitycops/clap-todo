@@ -1,5 +1,5 @@
 # clap-todo
-todo cli
+todo CLI
 
 ```
 Usage: todo.exe
