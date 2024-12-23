@@ -7,7 +7,7 @@ struct Todo {
     id: i32,
     title: String,
     done: bool,
-  }
+}
   
 impl Todo {
     fn add(id: i32, title: &str, done: bool) -> Self {
