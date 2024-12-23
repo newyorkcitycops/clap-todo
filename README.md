@@ -1,4 +1,7 @@
 # clap-todo
+todo cli
+
+```
 Usage: todo.exe
        todo.exe <COMMAND>
 
@@ -8,3 +11,4 @@ Commands:
 
 Options:
   -h, --help  Print help
+```
