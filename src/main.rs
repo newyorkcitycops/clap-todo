@@ -26,12 +26,13 @@ fn get_todos(connection: &Connection) -> Result<Vec<Todo>> {
     let todo_iter = statement.query_map(
         [], 
         |row| {
-        Ok(Todo {
-            id: row.get(0)?,
-            title: row.get(1)?,
-            done: row.get(2)?,
-        })
-    })?;
+            Ok(Todo {
+                id: row.get(0)?,
+                title: row.get(1)?,
+                done: row.get(2)?,
+            })
+        }
+    )?;
 
     let mut todos = Vec::new();
     for todo in todo_iter {
