@@ -12,9 +12,9 @@ struct Todo {
 impl Todo {
     fn add(id: i32, title: &str, done: bool) -> Self {
         Self {
-        id,
-        title: title.to_string(),
-        done,
+            id,
+            title: title.to_string(),
+            done,
         }
     }
 }
