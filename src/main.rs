@@ -46,7 +46,7 @@ fn main() -> Result<()> {
     let connection = Connection::open("todo.sqlite")?;
 
     connection.execute(
-    "CREATE TABLE IF NOT EXISTS todo (
+        "CREATE TABLE IF NOT EXISTS todo (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             done INTEGER DEFAULT 0
