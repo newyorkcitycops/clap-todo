@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use clap::Parser;
 use rusqlite::{Connection, Result};
 use todo::{TodoCli, TodoCliSubCommands};
@@ -42,6 +41,7 @@ fn format_done(done: &bool) -> String {
     }
 }
 
+
 fn main() -> Result<()> {
     let args = TodoCli::parse();
     let connection: Connection = Connection::open("todo.sqlite")?;
@@ -66,18 +66,30 @@ fn main() -> Result<()> {
         }
         Some(TodoCliSubCommands::Remove(remove_todo_args)) => {
             for todo in remove_todo_args.todos {
-                connection.execute(
-                    "DELETE FROM todo WHERE title = (?1)",
-                    &[&todo],
-                )?;
+                match todo.parse::<f64>() {
+                    Ok(_) => connection.execute(
+                        "DELETE FROM todo WHERE id = (?1)",
+                        &[&todo],
+                    )?,
+                    Err(_) => connection.execute(
+                        "DELETE FROM todo WHERE title = (?1)",
+                        &[&todo],
+                    )?,
+                };
             }
         }
         Some(TodoCliSubCommands::Done(done_todo_args)) => {
             for todo in done_todo_args.todos {
-                connection.execute(
-                    "UPDATE todo SET done = NOT done WHERE title = (?1)",
-                    &[&todo],
-                )?;
+                match todo.parse::<f64>() {
+                    Ok(_) => connection.execute(
+                        "UPDATE todo SET done = NOT done WHERE id = (?1)",
+                        &[&todo],
+                    )?,
+                    Err(_) => connection.execute(
+                        "UPDATE todo SET done = NOT done WHERE title = (?1)",
+                        &[&todo],
+                    )?,
+                };
             }
         }
         None => println!("{}", Table::new(get_todos(&connection)?).to_string())
