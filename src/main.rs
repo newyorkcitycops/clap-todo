@@ -2,21 +2,14 @@
 use clap::Parser;
 use rusqlite::{Connection, Result};
 use todo::{TodoCli, TodoCliSubCommands};
+use tabled::{Tabled, Table};
 
+#[derive(Tabled)]
 struct Todo {
     id: i32,
     title: String,
+    #[tabled(display_with = "format_done")]
     done: bool,
-}
-  
-impl Todo {
-    fn add(id: i32, title: &str, done: bool) -> Self {
-        Self {
-            id,
-            title: title.to_string(),
-            done,
-        }
-    }
 }
 
 fn get_todos(connection: &Connection) -> Result<Vec<Todo>> {
@@ -42,14 +35,21 @@ fn get_todos(connection: &Connection) -> Result<Vec<Todo>> {
     Ok(todos)
 }
 
+fn format_done(done: &bool) -> String {
+    match done {
+        false => "no".to_string(),
+        true => "yes".to_string(),
+    }
+}
+
 fn main() -> Result<()> {
     let args = TodoCli::parse();
-    let connection = Connection::open("todo.sqlite")?;
+    let connection: Connection = Connection::open("todo.sqlite")?;
 
     connection.execute(
         "CREATE TABLE IF NOT EXISTS todo (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
+            title TEXT UNIQUE NOT NULL,
             done INTEGER DEFAULT 0
         )",
         (),
@@ -64,12 +64,23 @@ fn main() -> Result<()> {
                 )?;
             }
         }
-        None => {
-            let todos = get_todos(&connection)?;
-            for todo in todos {
-                println!("{}", todo.title)
+        Some(TodoCliSubCommands::Remove(remove_todo_args)) => {
+            for todo in remove_todo_args.todos {
+                connection.execute(
+                    "DELETE FROM todo WHERE title = (?1)",
+                    &[&todo],
+                )?;
             }
         }
+        Some(TodoCliSubCommands::Done(done_todo_args)) => {
+            for todo in done_todo_args.todos {
+                connection.execute(
+                    "UPDATE todo SET done = NOT done WHERE title = (?1)",
+                    &[&todo],
+                )?;
+            }
+        }
+        None => println!("{}", Table::new(get_todos(&connection)?).to_string())
     }
 
     Ok(())
