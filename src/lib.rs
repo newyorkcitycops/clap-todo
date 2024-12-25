@@ -1,33 +1,58 @@
 use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args as _, Command, FromArgMatches, Parser, Subcommand};
+use clap::{ArgMatches, Args as _, Command, FromArgMatches, Parser, Subcommand, ValueEnum};
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct AddTodoArgument {
   pub todos: Vec<String>,
 }
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct RemoveTodoArgument {
   pub todos: Vec<String>,
 }
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct DoneTodoArgument {
   pub todos: Vec<String>,
 }
 
-#[derive(Debug)]
+#[derive(Parser)]
+pub struct SortTodoArgument {
+  pub sort: TodoColumns,
+}
+
+#[derive(Parser)]
+pub struct ViewTodoArgument {
+  pub todo: String,
+}
+
+pub enum TodoCliCommands {
+  Sort(SortTodoArgument),
+  View(ViewTodoArgument),
+}
+
 pub enum TodoCliSubCommands {
   Add(AddTodoArgument),
   Remove(RemoveTodoArgument),
   Done(DoneTodoArgument),
 }
 
-#[derive(Debug, Parser)]
+#[derive(ValueEnum, Clone)]
+pub enum TodoColumns {
+  Id,
+  Title,
+  Done,
+}
+
+#[derive(Parser)]
 #[command(subcommand_negates_reqs = true, subcommand_required = false)]
 pub struct TodoCli {
   #[command(subcommand)]
   pub subcommand: Option<TodoCliSubCommands>,
+  #[arg(short, long)]
+  pub sort: Option<TodoColumns>,
+  #[arg(short, long)]
+  pub todo: Option<String>,
 }
 
 impl FromArgMatches for TodoCliSubCommands {
