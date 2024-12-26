@@ -75,7 +75,6 @@ fn format_done(done: &bool) -> String {
         true => "yes".to_string(),
     }
 }
-
 fn main() -> Result<()> {
     let args = TodoCli::parse();
     let connection: Connection = Connection::open("todo.sqlite")?;
@@ -89,8 +88,8 @@ fn main() -> Result<()> {
         (),
     )?;
 
-    if let Some(todo) = args.todo {
-        println!("{}", Table::new(search_todos(&connection, todo)?).to_string());
+    if let Some(query) = args.search {
+        println!("{}", Table::new(search_todos(&connection, query)?).to_string());
     } else if let Some(sort) = args.sort {
         let mut todos = get_todos(&connection)?;
 

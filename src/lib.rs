@@ -52,7 +52,7 @@ pub struct TodoCli {
   #[arg(short, long)]
   pub sort: Option<TodoColumns>,
   #[arg(short, long)]
-  pub todo: Option<String>,
+  pub search: Option<String>,
 }
 
 impl FromArgMatches for TodoCliSubCommands {
